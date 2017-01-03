@@ -1,0 +1,29 @@
+"*":
+  "copy-file-to": {}
+  core:
+    disabledPackages: [
+      "git-control"
+      "git-plus"
+    ]
+    openEmptyEditorOnStart: false
+    telemetryConsent: "no"
+  editor:
+    fontSize: 13
+    invisibles: {}
+    lineHeight: 1.4
+    preferredLineLength: 120
+    showIndentGuide: true
+    tabType: "soft"
+  "exception-reporting":
+    userId: "033d17c2-4240-fe09-b017-39c5e1185834"
+  linter: {}
+  minimap:
+    plugins:
+      "find-and-replace": true
+      "find-and-replaceDecorationsZIndex": 0
+  "tree-view": {}
+  welcome:
+    showOnStartup: false
+".dockerfile.source":
+  editor:
+    preferredLineLength: 120

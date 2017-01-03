@@ -1,0 +1,21 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles: ''
+    ~/.extend.bashrc:
+      force: true
+    ~/.atom/config.cson:
+      path: atom/config.cson
+      force: true
+    ~/.atom/keymap.cson:
+      path: atom/keymap.cson
+      force: true
+
+- shell:
+  - git submodule update --init --recursive
+  - [apm install platformio-ide-terminal, Instalando plugin terminal atom]
