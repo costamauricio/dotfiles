@@ -7,6 +7,8 @@
 
 - link:
     ~/.dotfiles: ''
+    ~/.zshrc:
+      force: true
     ~/.extend.bashrc:
       force: true
     ~/.atom/config.cson:
@@ -18,4 +20,7 @@
 
 - shell:
   - git submodule update --init --recursive
-  - [apm install platformio-ide-terminal, Instalando plugin terminal atom]
+  - [apm install platformio-ide-terminal, Atom - Instalando plugin platformio-ide-terminal]
+  - [apm install project-plus, Atom - Instalando plugin project-plus]
+  - [apm install language-vue, Atom - Instalando plugin language-vue]
+  - [apm install language-docker, Atom - Instalando plugin language-docker]
