@@ -11,6 +11,11 @@
       force: true
     ~/.extend.bashrc:
       force: true
+    ~/.vimrc:
+      force: true
+    ~/.vim:
+      path: vim
+      force: true
     ~/.atom/config.cson:
       path: atom/config.cson
       force: true
@@ -20,6 +25,7 @@
 
 - shell:
   - git submodule update --init --recursive
+  - vim +PluginInstall +qall
   - [apm install platformio-ide-terminal, Atom - Instalando plugin platformio-ide-terminal]
   - [apm install project-plus, Atom - Instalando plugin project-plus]
   - [apm install language-vue, Atom - Instalando plugin language-vue]
