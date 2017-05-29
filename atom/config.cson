@@ -19,6 +19,8 @@
   "exception-reporting":
     userId: "033d17c2-4240-fe09-b017-39c5e1185834"
   linter: {}
+  "linter-php":
+    executablePath: "/usr/bin/local/php"
   minimap:
     plugins:
       "find-and-replace": true
