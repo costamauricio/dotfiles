@@ -31,3 +31,5 @@
   - [apm install language-vue, Atom - Instalando plugin language-vue]
   - [apm install language-docker, Atom - Instalando plugin language-docker]
   - [apm install linter-php, Atom - Instalando plugin linter-php]
+  - [apm install php-twig, Atom - Instalando plugin php-twig]
+  - [apm install file-icons, Atom - Instalando plugin file-icons]
