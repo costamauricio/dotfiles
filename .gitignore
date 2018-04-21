@@ -1,0 +1,3 @@
+fonts/
+vim/*
+!vim/bundle/Vundle.vim

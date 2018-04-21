@@ -6,8 +6,7 @@ Dotfiles Configuration
 
 * Git
 * Vim
-* zsh
-* atom
+* Zsh
 
 ### Install
 

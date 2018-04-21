@@ -9,29 +9,16 @@
     ~/.dotfiles: ''
     ~/.zshrc:
       force: true
-    ~/.extend.bashrc:
+    ~/.oh-my-zsh:
+      path: oh-my-zsh
       force: true
     ~/.vimrc:
       force: true
     ~/.vim:
       path: vim
       force: true
-    ~/.atom/config.cson:
-      path: atom/config.cson
-      force: true
-    ~/.atom/keymap.cson:
-      path: atom/keymap.cson
-      force: true
 
 - shell:
   - git submodule update --init --recursive
   - vim +PluginInstall +qall
-  - [apm install platformio-ide-terminal, Atom - Instalando plugin platformio-ide-terminal]
-  - [apm install project-plus, Atom - Instalando plugin project-plus]
-  - [apm install language-vue, Atom - Instalando plugin language-vue]
-  - [apm install language-docker, Atom - Instalando plugin language-docker]
-  - [apm install linter-php, Atom - Instalando plugin linter-php]
-  - [apm install php-twig, Atom - Instalando plugin php-twig]
-  - [apm install file-icons, Atom - Instalando plugin file-icons]
-  - [apm install editorconfig, Atom - Instalando plugin editorconfig]
-  - [apm install minimap, Atom - Instalando plugin minimap]
+  - git clone https://github.com/powerline/fonts.git --depth=1 && cd fonts && ./install.sh
