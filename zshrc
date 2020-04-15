@@ -59,7 +59,19 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git composer laravel node php npm branch command-not-found common-aliases cp github gitignore nmap pip sudo perms docker
+  git
+  node
+  npm
+  branch
+  command-not-found
+  common-aliases
+  cp
+  github
+  gitignore
+  nmap
+  pip
+  sudo
+  docker
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -92,3 +104,8 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+ALIAS_FILE=~/.zshrc_aliases
+
+if [ -f "$ALIAS_FILE" ]; then
+	source $ALIAS_FILE
+fi
