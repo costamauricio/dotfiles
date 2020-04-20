@@ -6,7 +6,8 @@ Dotfiles Configuration
 
 * Git
 * Vim
-* Zsh
+* [Oh My zsh](https://github.com/ohmyzsh/ohmyzsh)
+* [fzf](https://github.com/junegunn/fzf)
 
 ### Install
 

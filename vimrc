@@ -1,19 +1,29 @@
 set nocompatible
-filetype off 
+filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
-Plugin 'dracula/vim'
-"Plugin 'ervandew/supertab'
-"Plugin 'tpope/vim-fugitive'
-"Plugin 'majutsushi/tagbar'
-"Plugin 'vim-scripts/Gundo'
+Plugin 'tomasiser/vim-code-dark'
+Plugin 'vim-airline/vim-airline'
+Plugin 'junegunn/fzf'
 
 call vundle#end()
-filetype plugin indent on
 
+colorscheme codedark
+
+" Airline
+let g:airline_theme = 'codedark'
+let g:airline#extensions#tabline#enabled = 1
+
+map <C-n> :NERDTreeToggle<CR>
+map <C-p> :FZF<CR>
+map <C-h> :wincmd h<CR>
+map <C-l> :wincmd l<CR>
+
+filetype plugin indent on
 syntax on
-color dracula
+set number
+set hidden

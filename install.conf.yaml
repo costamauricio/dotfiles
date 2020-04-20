@@ -19,6 +19,6 @@
       force: true
 
 - shell:
-  - git submodule update --init --recursive
-  - vim +PluginInstall +qall
-  - git clone https://github.com/powerline/fonts.git --depth=1 && cd fonts && ./install.sh
+  - [git submodule update --init --recursive, Install Modules and linking files]
+  - [vim +PluginInstall +qall, Install VIM plugins]
+  - [git clone https://github.com/powerline/fonts.git --depth=1 && cd fonts && ./install.sh, Install powerline fonts]
