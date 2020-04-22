@@ -24,7 +24,8 @@ set hidden
 set cursorline
 "set cursorcolumn
 set updatetime=250
-let mapleader = ","
+set noswapfile
+let mapleader = "\<Space>"
 colorscheme codedark
 
 highlight GitGutterAdd ctermfg=Green
