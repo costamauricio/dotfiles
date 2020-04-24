@@ -1,3 +1,5 @@
+silent !stty -ixon
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
@@ -79,5 +81,11 @@ map <C-p> :FZF<CR>
 map <C-h> :bp<CR>
 map <C-l> :bn<CR>
 map <C-_> <plug>NERDCommenterToggle
+vmap <C-_> <plug>NERDCommenterToggle gv
 map <C-t> :bel term++rows=15<CR>
+map <C-s> :up<CR>
+imap <C-s> <c-o>:up<CR>
+vmap <C-s> <c-c>:up<CR>gv
 map <leader>r :so %<CR>
+
+autocmd VimLeave * silent !stty ixon

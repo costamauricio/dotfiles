@@ -107,5 +107,7 @@ source $ZSH/oh-my-zsh.sh
 ALIAS_FILE=~/.zshrc_aliases
 
 if [ -f "$ALIAS_FILE" ]; then
-	source $ALIAS_FILE
+  source $ALIAS_FILE
 fi
+
+export FZF_DEFAULT_COMMAND="ag -l --nocolor --hidden -g \"\""
