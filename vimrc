@@ -37,6 +37,7 @@ let g:gitgutter_sign_removed = '▏'
 let g:gitgutter_sign_removed_first_line = '▔'
 let g:gitgutter_sign_modified_removed = '▋'
 
+let g:airline_powerline_fonts = 1
 let g:airline_theme = 'codedark'
 let g:airline#extensions#tabline#enabled = 1
 
