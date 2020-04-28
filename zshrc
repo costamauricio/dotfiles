@@ -111,3 +111,5 @@ if [ -f "$ALIAS_FILE" ]; then
 fi
 
 export FZF_DEFAULT_COMMAND="ag -l --nocolor --hidden -g \"\""
+
+[ -z "$TMUX"  ] && { exec tmux new-session && exit;}
