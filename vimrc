@@ -82,6 +82,7 @@ map <C-n> :NERDTreeToggle<CR>
 map <C-p> :FZF<CR>
 map <C-h> :bp<CR>
 map <C-l> :bn<CR>
+map <C-c> :bd<CR>
 map <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
 map <C-t> :bel term++rows=15<CR>
