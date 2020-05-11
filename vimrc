@@ -27,6 +27,7 @@ set noswapfile
 set backspace=indent,eol,start
 let mapleader = "\<Space>"
 colorscheme codedark
+set list listchars=tab:>\ ,trail:.
 
 highlight GitGutterAdd ctermfg=Green
 highlight GitGutterChange ctermfg=Blue
@@ -90,5 +91,6 @@ map <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
 map <leader>r :so %<CR>
+nnoremap ; :
 
 autocmd VimLeave * silent !stty ixon
