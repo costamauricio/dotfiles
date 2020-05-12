@@ -15,6 +15,7 @@ Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 
 autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
+autocmd BufRead,BufNewFile *.ino,*.pde set filetype=c++
 
 filetype plugin indent on
 syntax on
@@ -28,6 +29,7 @@ set backspace=indent,eol,start
 let mapleader = "\<Space>"
 colorscheme codedark
 set list listchars=tab:>\ ,trail:.
+set autoread
 
 highlight GitGutterAdd ctermfg=Green
 highlight GitGutterChange ctermfg=Blue
@@ -90,7 +92,8 @@ map <C-t> :bel term++rows=15<CR>
 map <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
-map <leader>r :so %<CR>
+nnoremap <leader>r :so %<CR>
+nnoremap <leader>n :enew<CR>
 nnoremap ; :
 
 autocmd VimLeave * silent !stty ixon
