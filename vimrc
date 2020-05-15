@@ -4,6 +4,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'tomasiser/vim-code-dark'
+Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf'
 Plug 'airblade/vim-gitgutter'
@@ -15,7 +16,10 @@ Plug 'editorconfig/editorconfig-vim'
 call plug#end()
 
 autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
-autocmd BufRead,BufNewFile *.ino,*.pde set filetype=c++
+"autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
+
+colorscheme gruvbox
+set background=dark
 
 filetype plugin indent on
 syntax on
@@ -27,13 +31,20 @@ set updatetime=250
 set noswapfile
 set backspace=indent,eol,start
 let mapleader = "\<Space>"
-colorscheme codedark
-set list listchars=tab:>\ ,trail:.
+set list listchars=tab:\│\ ,trail:.
 set autoread
+"set expandtab
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
+set autoindent
+set smartindent
 
-highlight GitGutterAdd ctermfg=Green
-highlight GitGutterChange ctermfg=Blue
-highlight GitGutterDelete ctermfg=Red
+highlight SpecialKey ctermfg=238 ctermbg=236
+
+highlight GitGutterAdd ctermfg=Green ctermbg=237
+highlight GitGutterChange ctermfg=Blue ctermbg=237
+highlight GitGutterDelete ctermfg=Red ctermbg=237
 
 let g:gitgutter_sign_added = '▎'
 let g:gitgutter_sign_modified = '▎'
@@ -42,8 +53,18 @@ let g:gitgutter_sign_removed_first_line = '▔'
 let g:gitgutter_sign_modified_removed = '▋'
 
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'codedark'
+let g:airline_theme = 'gruvbox'
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+fun! TrimWhitespace()
+	let l:save = winsaveview()
+	keeppatterns %s/\s\+$//e
+	call winrestview(l:save)
+endfun
+
+autocmd BufWritePre * :call TrimWhitespace()
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
@@ -85,7 +106,7 @@ map <C-n> :NERDTreeToggle<CR>
 map <C-p> :FZF<CR>
 map <C-h> :bp<CR>
 map <C-l> :bn<CR>
-map <C-c> :bd<CR>
+map <leader>w :bd<CR>
 map <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
 map <C-t> :bel term++rows=15<CR>
