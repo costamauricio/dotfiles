@@ -1,2 +1,4 @@
 fonts/
 vim/*
+!tmux/plugins/tpm
+tmux/*

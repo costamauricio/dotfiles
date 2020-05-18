@@ -17,6 +17,9 @@
     ~/.vim:
       path: vim
       force: true
+    ~/.tmux:
+      path: tmux
+      force: true
     ~/.tmux.conf:
       path: tmux.conf
       force: true

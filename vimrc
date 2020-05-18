@@ -12,6 +12,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'editorconfig/editorconfig-vim'
+Plug 'maxmellon/vim-jsx-pretty'
 
 call plug#end()
 
@@ -39,6 +40,8 @@ set tabstop=4
 set softtabstop=4
 set autoindent
 set smartindent
+
+let NERDTreeShowHidden=1
 
 highlight SpecialKey ctermfg=238 ctermbg=236
 
@@ -115,6 +118,7 @@ imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
 nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
+nnoremap <leader>ff :NERDTreeFind<CR>
 nnoremap ; :
 
 autocmd VimLeave * silent !stty ixon
