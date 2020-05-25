@@ -16,7 +16,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 
 call plug#end()
 
-autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
+"autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
+
 "autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
 colorscheme gruvbox

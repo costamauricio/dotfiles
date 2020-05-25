@@ -13,6 +13,7 @@
       path: oh-my-zsh
       force: true
     ~/.vimrc:
+      path: vimrc
       force: true
     ~/.vim:
       path: vim
@@ -23,10 +24,15 @@
     ~/.tmux.conf:
       path: tmux.conf
       force: true
+    ~/.config/nvim/init.vim:
+      create: true
+      path: vimrc
+      force: true
 
 - shell:
   - [git submodule update --init --recursive, Install Modules and linking files]
   - [curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install Vim-Plug]
+  - [curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install NVIM Vim-Plug]
   - [vim +PlugUpgrade +qall, Upgrade Vim-Plug]
   - [vim +PlugInstall +qall, Install VIM plugins]
   - [git clone https://github.com/powerline/fonts.git --depth=1 && cd fonts && ./install.sh, Install powerline fonts]
