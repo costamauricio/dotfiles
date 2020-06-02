@@ -4,7 +4,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'tomasiser/vim-code-dark'
-Plug 'morhetz/gruvbox'
+Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf'
 Plug 'airblade/vim-gitgutter'
@@ -12,11 +12,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'editorconfig/editorconfig-vim'
+
+"Javascript plugins
+Plug 'pangloss/vim-javascript'
 Plug 'maxmellon/vim-jsx-pretty'
 
 call plug#end()
-
-"autocmd TerminalOpen * if bufwinnr('') > 0 | setlocal nobuflisted | endif
 
 "autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
@@ -35,7 +36,7 @@ set backspace=indent,eol,start
 let mapleader = "\<Space>"
 set list listchars=tab:\│\ ,trail:.
 set autoread
-"set expandtab
+set expandtab
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
@@ -63,9 +64,9 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
 fun! TrimWhitespace()
-	let l:save = winsaveview()
-	keeppatterns %s/\s\+$//e
-	call winrestview(l:save)
+  let l:save = winsaveview()
+  keeppatterns %s/\s\+$//e
+  call winrestview(l:save)
 endfun
 
 autocmd BufWritePre * :call TrimWhitespace()
@@ -110,13 +111,12 @@ map <C-n> :NERDTreeToggle<CR>
 map <C-p> :FZF<CR>
 map <C-h> :bp<CR>
 map <C-l> :bn<CR>
-map <leader>w :bd<CR>
 map <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
-map <C-t> :bel term++rows=15<CR>
 map <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
+nnoremap <leader>w :bd<CR>
 nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
 nnoremap <leader>ff :NERDTreeFind<CR>
