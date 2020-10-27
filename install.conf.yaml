@@ -12,6 +12,9 @@
     ~/.oh-my-zsh:
       path: oh-my-zsh
       force: true
+    ~/.oh-my-zsh-custom:
+      path: oh-my-zsh-custom
+      force: true
     ~/.vimrc:
       path: vimrc
       force: true

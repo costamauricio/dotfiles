@@ -122,5 +122,6 @@ nnoremap <leader>n :enew<CR>
 nnoremap <leader>ff :NERDTreeFind<CR>
 nnoremap ; :
 inoremap jj <Esc>
+vnoremap <leader>c "+y gv
 
 autocmd VimLeave * silent !stty ixon
