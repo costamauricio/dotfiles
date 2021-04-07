@@ -112,6 +112,6 @@ if [ -f "$ALIAS_FILE" ]; then
   source $ALIAS_FILE
 fi
 
-export FZF_DEFAULT_COMMAND="ag -l --nocolor --hidden -g \"\""
+export FZF_DEFAULT_COMMAND="ag -l --nocolor --hidden --ignore \".git/*\" -g \"\""
 
 [ -z "$TMUX"  ] && { exec tmux new-session && exit;}

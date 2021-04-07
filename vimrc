@@ -12,6 +12,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'editorconfig/editorconfig-vim'
+Plug 'ryanoasis/vim-devicons'
+Plug 'puremourning/vimspector'
+Plug 'szw/vim-maximizer'
 
 "Javascript plugins
 Plug 'pangloss/vim-javascript'
@@ -26,11 +29,12 @@ set background=dark
 
 filetype plugin indent on
 syntax on
-set number
+set number relativenumber
+set nu rnu
 set hidden
 set cursorline
 "set cursorcolumn
-set updatetime=250
+set updatetime=750
 set noswapfile
 set backspace=indent,eol,start
 let mapleader = "\<Space>"
@@ -42,8 +46,13 @@ set tabstop=4
 set softtabstop=4
 set autoindent
 set smartindent
+set smartcase
+
+autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 let NERDTreeShowHidden=1
+let g:NERDTreeIgnore = ['^\.git']
 
 highlight SpecialKey ctermfg=238 ctermbg=236
 
@@ -107,21 +116,24 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-map <C-n> :NERDTreeToggle<CR>
-map <C-p> :FZF<CR>
-map <C-h> :bp<CR>
-map <C-l> :bn<CR>
-map <C-_> <plug>NERDCommenterToggle
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <leader>ff :NERDTreeFind<CR>
+nnoremap <C-p> :FZF<CR>
+nmap <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
-map <C-s> :up<CR>
+nnoremap <C-h> :bp<CR>
+nnoremap <C-l> :bn<CR>
+nnoremap <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
-nnoremap <leader>w :bd<CR>
+nnoremap <leader>w :bp\|bd #<CR>
 nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
-nnoremap <leader>ff :NERDTreeFind<CR>
-nnoremap ; :
 inoremap jj <Esc>
-vnoremap <leader>c "+y gv
+vnoremap <leader>y "+y gv
+nnoremap <S-k> :m-2<CR>
+nnoremap <S-j> :m+1<CR>
+vnoremap <S-k> :m '<-2<CR>gv
+vnoremap <S-j> :m '>+1<CR>gv
 
 autocmd VimLeave * silent !stty ixon
