@@ -6,7 +6,6 @@ Plug 'scrooloose/nerdtree'
 Plug 'tomasiser/vim-code-dark'
 Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
-Plug 'junegunn/fzf'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdcommenter'
@@ -15,6 +14,10 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
+
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 "Javascript plugins
 Plug 'pangloss/vim-javascript'
@@ -27,26 +30,28 @@ call plug#end()
 colorscheme gruvbox
 set background=dark
 
+let mapleader = "\<Space>"
+
 filetype plugin indent on
 syntax on
 set number relativenumber
 set nu rnu
 set hidden
+set noswapfile
 set cursorline
 "set cursorcolumn
-set updatetime=750
-set noswapfile
+set scrolloff=15
 set backspace=indent,eol,start
-let mapleader = "\<Space>"
 set list listchars=tab:\│\ ,trail:.
 set autoread
 set expandtab
 set shiftwidth=4
-set tabstop=4
-set softtabstop=4
+set tabstop=4 softtabstop=4
 set autoindent
 set smartindent
 set smartcase
+
+set updatetime=750
 
 autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
@@ -73,12 +78,15 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
 fun! TrimWhitespace()
-  let l:save = winsaveview()
-  keeppatterns %s/\s\+$//e
-  call winrestview(l:save)
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
 endfun
 
-autocmd BufWritePre * :call TrimWhitespace()
+augroup PERFORMS
+    autocmd!
+    autocmd BufWritePre * :call TrimWhitespace()
+augroup END
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
@@ -118,7 +126,9 @@ nmap <silent> gr <Plug>(coc-references)
 
 nnoremap <C-n> :NERDTreeToggle<CR>
 nnoremap <leader>ff :NERDTreeFind<CR>
-nnoremap <C-p> :FZF<CR>
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>b <cmd>Telescope buffers<cr>
 nmap <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
 nnoremap <C-h> :bp<CR>
