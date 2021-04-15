@@ -12,12 +12,16 @@ Plug 'preservim/nerdcommenter'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'editorconfig/editorconfig-vim'
 Plug 'ryanoasis/vim-devicons'
+
+"Vimspector
 Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
 
+"Vim-Telescope plugins
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 "Javascript plugins
 Plug 'pangloss/vim-javascript'
@@ -136,7 +140,7 @@ nnoremap <C-l> :bn<CR>
 nnoremap <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
-nnoremap <leader>w :bp\|bd #<CR>
+nnoremap <leader>w :bd\|bp<CR>
 nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
 inoremap jj <Esc>
@@ -145,5 +149,17 @@ nnoremap <S-k> :m-2<CR>
 nnoremap <S-j> :m+1<CR>
 vnoremap <S-k> :m '<-2<CR>gv
 vnoremap <S-j> :m '>+1<CR>gv
+
+lua << EOF
+require('telescope').setup {
+    extensions = {
+        fzy_native = {
+            override_generic_sorter = false,
+            override_file_sorter = true,
+        }
+    }
+}
+require('telescope').load_extension('fzy_native')
+EOF
 
 autocmd VimLeave * silent !stty ixon
