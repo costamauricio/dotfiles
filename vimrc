@@ -81,6 +81,15 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
+fun! CloseCurrentBuf()
+    let l:opened = len( getbufinfo({'buflisted':1}) )
+    if l:opened == 1
+        execute "enew | bd #"
+    else
+        execute "bp | bd #"
+    endif
+endfun
+
 fun! TrimWhitespace()
     let l:save = winsaveview()
     keeppatterns %s/\s\+$//e
@@ -140,7 +149,7 @@ nnoremap <C-l> :bn<CR>
 nnoremap <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
-nnoremap <leader>w :bd\|bp<CR>
+nnoremap <leader>w :call CloseCurrentBuf()<CR>
 nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
 inoremap jj <Esc>
