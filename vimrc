@@ -3,7 +3,6 @@ silent !stty -ixon
 call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
-Plug 'tomasiser/vim-code-dark'
 Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
@@ -49,8 +48,7 @@ set backspace=indent,eol,start
 set list listchars=tab:\│\ ,trail:.
 set autoread
 set expandtab
-set shiftwidth=4
-set tabstop=4 softtabstop=4
+set tabstop=4 shiftwidth=4 softtabstop=4
 set autoindent
 set smartindent
 set smartcase
@@ -138,10 +136,10 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <leader>ff :NERDTreeFind<CR>
+nnoremap <leader>nf :NERDTreeFind<CR>
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>b <cmd>Telescope buffers<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nmap <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
 nnoremap <C-h> :bp<CR>
