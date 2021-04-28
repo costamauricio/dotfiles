@@ -4,13 +4,18 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
 Plug 'gruvbox-community/gruvbox'
+
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdcommenter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'editorconfig/editorconfig-vim'
 Plug 'ryanoasis/vim-devicons'
+
+"LSP and extras
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
 
 "Vimspector
 Plug 'puremourning/vimspector'
@@ -67,6 +72,7 @@ highlight GitGutterAdd ctermfg=Green ctermbg=237
 highlight GitGutterChange ctermfg=Blue ctermbg=237
 highlight GitGutterDelete ctermfg=Red ctermbg=237
 
+let g:gitgutter_sign_allow_clobber = 1
 let g:gitgutter_sign_added = '▎'
 let g:gitgutter_sign_modified = '▎'
 let g:gitgutter_sign_removed = '▏'
@@ -99,41 +105,75 @@ augroup PERFORMS
     autocmd BufWritePre * :call TrimWhitespace()
 augroup END
 
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+lua << EOF
+local util = require'lspconfig/util'
 
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+-- npm install -g typescrypt typescrypt-language-server
+require'lspconfig'.tsserver.setup{
+    on_attach=function(client)
+        client.resolved_capabilities.document_formatting = false
+        require'completion'.on_attach(client)
+    end
+}
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+local eslint = {
+    lintCommand = "npx --no-install eslint -f unix --stdin --stdin-filename ${INPUT}",
+    lintStdin = true,
+    lintFormats = {"%f:%l:%c: %m"},
+    lintIgnoreExitCode = true,
+    formatCommand = "npx --no-install prettier --stdin-filepath ${INPUT}",
+    formatStdin = true
+}
 
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+-- install efm-langserver
+require'lspconfig'.efm.setup{
+    on_attach=function(client)
+        client.resolved_capabilities.hover = false
+        client.resolved_capabilities.documentSymbol = false
+        client.resolved_capabilities.codeAction = false
+        client.resolved_capabilities.completion = false
+        client.resolved_capabilities.document_formatting = true
+    end,
+    root_dir = util.root_pattern('.eslintrc*', '.prettierr*'),
+    settings = {
+        languages = {
+            typescript = {eslint},
+            javascript = {eslint},
+            typescriptreact = {eslint},
+            javascriptreact = {eslint}
+        }
+    },
+    filetypes = {
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+  },
+}
+EOF
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  imap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
 
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" Avoid showing message extra message when using completion
+set shortmess+=c
+
+imap <tab> <Plug>(completion_smart_tab)
+imap <s-tab> <Plug>(completion_smart_s_tab)
+
+nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> re <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
+
 
 nnoremap <C-n> :NERDTreeToggle<CR>
 nnoremap <leader>nf :NERDTreeFind<CR>
@@ -152,10 +192,10 @@ nnoremap <leader>r :so %<CR>
 nnoremap <leader>n :enew<CR>
 inoremap jj <Esc>
 vnoremap <leader>y "+y gv
-nnoremap <S-k> :m-2<CR>
-nnoremap <S-j> :m+1<CR>
-vnoremap <S-k> :m '<-2<CR>gv
-vnoremap <S-j> :m '>+1<CR>gv
+"nnoremap <S-k> :m-2<CR>
+"nnoremap <S-j> :m+1<CR>
+"vnoremap <S-k> :m '<-2<CR>gv
+"vnoremap <S-j> :m '>+1<CR>gv
 
 lua << EOF
 require('telescope').setup {
