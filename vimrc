@@ -72,7 +72,7 @@ highlight GitGutterAdd ctermfg=Green ctermbg=237
 highlight GitGutterChange ctermfg=Blue ctermbg=237
 highlight GitGutterDelete ctermfg=Red ctermbg=237
 
-let g:gitgutter_sign_allow_clobber = 1
+let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_sign_added = '▎'
 let g:gitgutter_sign_modified = '▎'
 let g:gitgutter_sign_removed = '▏'
@@ -103,14 +103,17 @@ endfun
 augroup PERFORMS
     autocmd!
     autocmd BufWritePre * :call TrimWhitespace()
+    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
 augroup END
 
 lua << EOF
+-- require('vim.lsp.log').set_level('debug')
 local util = require'lspconfig/util'
 
 -- npm install -g typescrypt typescrypt-language-server
 require'lspconfig'.tsserver.setup{
     on_attach=function(client)
+        vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
         client.resolved_capabilities.document_formatting = false
         require'completion'.on_attach(client)
     end
@@ -174,7 +177,6 @@ nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
-
 nnoremap <C-n> :NERDTreeToggle<CR>
 nnoremap <leader>nf :NERDTreeFind<CR>
 nnoremap <C-p> <cmd>Telescope find_files<cr>
@@ -206,7 +208,7 @@ require('telescope').setup {
         }
     }
 }
-require('telescope').load_extension('fzy_native')
+require'telescope'.load_extension('fzy_native')
 EOF
 
 autocmd VimLeave * silent !stty ixon
