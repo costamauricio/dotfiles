@@ -2,16 +2,16 @@ silent !stty -ixon
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'scrooloose/nerdtree'
 Plug 'gruvbox-community/gruvbox'
 
+Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
+Plug 'preservim/nerdcommenter'
+Plug 'editorconfig/editorconfig-vim'
+
+"Git Integrations
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'preservim/nerdcommenter'
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'editorconfig/editorconfig-vim'
-Plug 'ryanoasis/vim-devicons'
 
 "LSP and extras
 Plug 'neovim/nvim-lspconfig'
@@ -20,6 +20,12 @@ Plug 'nvim-lua/completion-nvim'
 "Vimspector
 Plug 'puremourning/vimspector'
 Plug 'szw/vim-maximizer'
+
+"Icons dependency
+Plug 'kyazdani42/nvim-web-devicons'
+
+"File-tree
+Plug 'kyazdani42/nvim-tree.lua'
 
 "Vim-Telescope plugins
 Plug 'nvim-lua/popup.nvim'
@@ -33,10 +39,9 @@ Plug 'maxmellon/vim-jsx-pretty'
 
 call plug#end()
 
-"autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
-
 colorscheme gruvbox
 set background=dark
+set termguicolors
 
 let mapleader = "\<Space>"
 
@@ -60,11 +65,11 @@ set smartcase
 
 set updatetime=750
 
+"autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-let NERDTreeShowHidden=1
-let g:NERDTreeIgnore = ['^\.git']
+let g:nvim_tree_ignore = ['.git', 'node_modules']
 
 highlight SpecialKey ctermfg=238 ctermbg=236
 
@@ -177,9 +182,9 @@ nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
 
-nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <leader>nf :NERDTreeFind<CR>
-nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <leader>nt :NvimTreeToggle<CR>
+nnoremap <leader>nf :NvimTreeFindFile<CR>
+nnoremap <C-p> <cmd>lua require'telescope.builtin'.find_files({hidden = true})<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nmap <C-_> <plug>NERDCommenterToggle
@@ -201,6 +206,9 @@ vnoremap <leader>y "+y gv
 
 lua << EOF
 require('telescope').setup {
+    defaults = {
+        file_ignore_patterns = {}
+    },
     extensions = {
         fzy_native = {
             override_generic_sorter = false,
