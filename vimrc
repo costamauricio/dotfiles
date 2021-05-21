@@ -69,13 +69,19 @@ set updatetime=750
 autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-let g:nvim_tree_ignore = ['.git', 'node_modules']
+let g:nvim_tree_ignore = ['.git']
 
-highlight SpecialKey ctermfg=238 ctermbg=236
+highlight LspDiagnosticsSignError ctermfg=Red ctermbg=235 guifg=Red guibg=235
+highlight LspDiagnosticsSignWarning ctermfg=Yellow ctermbg=235 guifg=Yellow guibg=235
+highlight LspDiagnosticsSignInformation ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
+highlight LspDiagnosticsSignHint ctermfg=Green ctermbg=235 guifg=Green guibg=235
 
-highlight GitGutterAdd ctermfg=Green ctermbg=237
-highlight GitGutterChange ctermfg=Blue ctermbg=237
-highlight GitGutterDelete ctermfg=Red ctermbg=237
+highlight SpecialKey ctermfg=238 ctermbg=236 guibg=238 guifg=238
+highlight SignColumn guibg=235 ctermbg=235
+
+highlight GitGutterAdd ctermfg=Green ctermbg=235 guifg=Green guibg=235
+highlight GitGutterChange ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
+highlight GitGutterDelete ctermfg=Red ctermbg=235 guifg=Red guibg=235
 
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_sign_added = '▎'
@@ -115,13 +121,65 @@ lua << EOF
 -- require('vim.lsp.log').set_level('debug')
 local util = require'lspconfig/util'
 
+-- Check for an existant prettierrc* to enable formatting with prettier or tsserver
+local function prettier_config_exists()
+    local eslintrc = vim.fn.glob(".prettier*", true, true)
+
+    if not vim.tbl_isempty(eslintrc) then
+        return true
+    end
+
+    return false
+end
+
+local function format_diagnostics(params, client_id, client_name, filter_out)
+    for i, diagnostic in ipairs(params.diagnostics) do
+        if filter_out ~= nil and filter_out(diagnostic) then
+            params.diagnostics[i] = nil
+        else
+            diagnostic.message = '['.. client_name ..'] '..diagnostic.message..' ['..(diagnostic.code or '')..']'
+        end
+    end
+
+    return require('vim.lsp.diagnostic').on_publish_diagnostics(nil, nil, params, client_id)
+end
+
+local function filter_commonjs_diagnostics(diagnostic)
+    if diagnostic.severity == 4 and diagnostic.code ~= 6133 then
+        return true
+    end
+
+    return false
+end
+
 -- npm install -g typescrypt typescrypt-language-server
 require'lspconfig'.tsserver.setup{
     on_attach=function(client)
         vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-        client.resolved_capabilities.document_formatting = false
+
+        if prettier_config_exists() then
+            client.resolved_capabilities.document_formatting = false
+        end
+
         require'completion'.on_attach(client)
-    end
+    end,
+    handlers = {
+        [ "textDocument/publishDiagnostics" ] = function(_, _, params, client_id)
+            return format_diagnostics(params, client_id, "TSServer", filter_commonjs_diagnostics)
+        end
+    },
+    filetypes = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+        "json"
+    },
+    flags = {
+        allow_incremental_sync = true
+    }
 }
 
 local eslint = {
@@ -136,27 +194,39 @@ local eslint = {
 -- install efm-langserver
 require'lspconfig'.efm.setup{
     on_attach=function(client)
-        client.resolved_capabilities.hover = false
-        client.resolved_capabilities.documentSymbol = false
-        client.resolved_capabilities.codeAction = false
-        client.resolved_capabilities.completion = false
-        client.resolved_capabilities.document_formatting = true
+        if not prettier_config_exists() then
+            client.resolved_capabilities.document_formatting = false
+        end
+
+        client.resolved_capabilities.goto_definition = false
     end,
+    init_options = {
+        documentFormatting = true,
+    },
     root_dir = util.root_pattern('.eslintrc*', '.prettierr*'),
+    handlers = {
+        [ "textDocument/publishDiagnostics" ] = function(_, _, params, client_id)
+            return format_diagnostics(params, client_id, "ESLint")
+        end
+    },
     settings = {
         languages = {
-            typescript = {eslint},
             javascript = {eslint},
-            typescriptreact = {eslint},
-            javascriptreact = {eslint}
+            javascriptreact = {eslint},
+            ["javascript.jsx"] = {eslint},
+            typescript = {eslint},
+            ["typescript.tsx"] = {eslint},
+            typescriptreact = {eslint}
         }
     },
     filetypes = {
         "javascript",
         "javascriptreact",
+        "javascript.jsx",
         "typescript",
+        "typescript.tsx",
         "typescriptreact"
-  },
+    },
 }
 EOF
 
@@ -170,6 +240,8 @@ set completeopt=menuone,noinsert,noselect
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
+
+"Shortcuts
 imap <tab> <Plug>(completion_smart_tab)
 imap <s-tab> <Plug>(completion_smart_s_tab)
 
@@ -207,7 +279,7 @@ vnoremap <leader>y "+y gv
 lua << EOF
 require('telescope').setup {
     defaults = {
-        file_ignore_patterns = {}
+        file_ignore_patterns = {'.git/'}
     },
     extensions = {
         fzy_native = {
@@ -217,6 +289,9 @@ require('telescope').setup {
     }
 }
 require'telescope'.load_extension('fzy_native')
+require'nvim-web-devicons'.setup {
+    default = true
+}
 EOF
 
 autocmd VimLeave * silent !stty ixon
