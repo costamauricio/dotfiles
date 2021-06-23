@@ -152,8 +152,10 @@ local function filter_commonjs_diagnostics(diagnostic)
     return false
 end
 
--- npm install -g typescrypt typescrypt-language-server
-require'lspconfig'.tsserver.setup{
+local lspconfig = require'lspconfig'
+
+-- npm install -g typescript typescript-language-server
+lspconfig.tsserver.setup{
     on_attach=function(client)
         vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 
@@ -192,7 +194,7 @@ local eslint = {
 }
 
 -- install efm-langserver
-require'lspconfig'.efm.setup{
+lspconfig.efm.setup{
     on_attach=function(client)
         if not prettier_config_exists() then
             client.resolved_capabilities.document_formatting = false
@@ -228,6 +230,20 @@ require'lspconfig'.efm.setup{
         "typescriptreact"
     },
 }
+
+-- install gopls
+lspconfig.gopls.setup {
+    cmd = {"gopls", "serve"},
+    settings = {
+        gopls = {
+            analyses = {
+                unusedparams = true,
+            },
+            staticcheck = true,
+        },
+    },
+}
+
 EOF
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
