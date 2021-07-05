@@ -2,6 +2,7 @@ silent !stty -ixon
 
 call plug#begin('~/.vim/plugged')
 
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'gruvbox-community/gruvbox'
 
 Plug 'ryanoasis/vim-devicons'
@@ -34,8 +35,8 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
 "Javascript plugins
-Plug 'pangloss/vim-javascript'
-Plug 'maxmellon/vim-jsx-pretty'
+"Plug 'pangloss/vim-javascript'
+"Plug 'maxmellon/vim-jsx-pretty'
 
 call plug#end()
 
@@ -118,6 +119,9 @@ augroup PERFORMS
 augroup END
 
 lua << EOF
+local ts = require 'nvim-treesitter.configs'
+ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
+
 -- require('vim.lsp.log').set_level('debug')
 local util = require'lspconfig/util'
 
