@@ -1,0 +1,10 @@
+[user]
+	name = Maurício Costa
+[alias]
+    ck=checkout
+    f=fetch
+    p=push
+    c=commit
+    s=status
+[push]
+	default = current

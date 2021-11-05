@@ -6,6 +6,9 @@
 - clean: ['~']
 
 - link:
+    ~/.gitconfig:
+      path: gitconfig
+      force: true
     ~/.dotfiles: ''
     ~/.zshrc:
       force: true
