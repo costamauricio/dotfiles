@@ -66,8 +66,6 @@ set updatetime=750
 autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
-let g:nvim_tree_ignore = ['.git']
-
 highlight LspDiagnosticsSignError ctermfg=Red ctermbg=235 guifg=Red guibg=235
 highlight LspDiagnosticsSignWarning ctermfg=Yellow ctermbg=235 guifg=Yellow guibg=235
 highlight LspDiagnosticsSignInformation ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
@@ -79,6 +77,8 @@ highlight SignColumn guibg=235 ctermbg=235
 highlight GitGutterAdd ctermfg=Green ctermbg=235 guifg=Green guibg=235
 highlight GitGutterChange ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
 highlight GitGutterDelete ctermfg=Red ctermbg=235 guifg=Red guibg=235
+
+let g:nvim_tree_quit_on_open = 1
 
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_sign_added = '▎'
@@ -111,12 +111,16 @@ endfun
 augroup PERFORMS
     autocmd!
     autocmd BufWritePre * :call TrimWhitespace()
-    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+    autocmd CursorHold * lua vim.diagnostic.open_float()
 augroup END
 
 lua << EOF
-local ts = require 'nvim-treesitter.configs'
-ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
+require 'nvim-treesitter.configs'.setup {
+    ensure_installed = 'maintained',
+    highlight = {enable = true},
+}
+
+require'nvim-tree'.setup {}
 
 -- require('vim.lsp.log').set_level('debug')
 local util = require'lspconfig/util'
@@ -141,7 +145,7 @@ local function format_diagnostics(params, client_id, client_name, filter_out)
         end
     end
 
-    return require('vim.lsp.diagnostic').on_publish_diagnostics(nil, nil, params, client_id)
+    return require('vim.lsp.diagnostic').on_publish_diagnostics(nil, params, client_id)
 end
 
 local function filter_commonjs_diagnostics(diagnostic)
@@ -166,7 +170,7 @@ lspconfig.tsserver.setup{
         require'completion'.on_attach(client)
     end,
     handlers = {
-        [ "textDocument/publishDiagnostics" ] = function(_, _, params, client_id)
+        [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
             return format_diagnostics(params, client_id, "TSServer", filter_commonjs_diagnostics)
         end
     },
@@ -207,7 +211,7 @@ lspconfig.efm.setup{
     },
     root_dir = util.root_pattern('.eslintrc*', '.prettierr*'),
     handlers = {
-        [ "textDocument/publishDiagnostics" ] = function(_, _, params, client_id)
+        [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
             return format_diagnostics(params, client_id, "ESLint")
         end
     },
