@@ -16,7 +16,7 @@ Plug 'tpope/vim-fugitive'
 
 "LSP and extras
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 
 "Vimspector
 Plug 'puremourning/vimspector'
@@ -33,6 +33,8 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+
+Plug 'nicwest/vim-http'
 
 call plug#end()
 
@@ -77,6 +79,11 @@ highlight SignColumn guibg=235 ctermbg=235
 highlight GitGutterAdd ctermfg=Green ctermbg=235 guifg=Green guibg=235
 highlight GitGutterChange ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
 highlight GitGutterDelete ctermfg=Red ctermbg=235 guifg=Red guibg=235
+
+let g:coq_settings = {'keymap.jump_to_mark': v:null, 'auto_start': 'shut-up'}
+
+let g:vim_http_tempbuffer = 1
+let g:vim_http_split_vertically = 1
 
 let g:nvim_tree_quit_on_open = 1
 
@@ -157,17 +164,14 @@ local function filter_commonjs_diagnostics(diagnostic)
 end
 
 local lspconfig = require'lspconfig'
+local coq = require'coq'
 
 -- npm install -g typescript typescript-language-server
-lspconfig.tsserver.setup{
+lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
     on_attach=function(client)
-        vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
-
         if prettier_config_exists() then
             client.resolved_capabilities.document_formatting = false
         end
-
-        require'completion'.on_attach(client)
     end,
     handlers = {
         [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
@@ -186,7 +190,7 @@ lspconfig.tsserver.setup{
     flags = {
         allow_incremental_sync = true
     }
-}
+}))
 
 local eslint = {
     lintCommand = "npx --no-install eslint -f unix --stdin --stdin-filename ${INPUT}",
@@ -236,7 +240,7 @@ lspconfig.efm.setup{
 }
 
 -- install gopls
-lspconfig.gopls.setup {
+lspconfig.gopls.setup(coq.lsp_ensure_capabilities({
     cmd = {"gopls", "serve"},
     settings = {
         gopls = {
@@ -246,24 +250,24 @@ lspconfig.gopls.setup {
             staticcheck = true,
         },
     },
-}
+}))
 
 EOF
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-" Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
+"" Set completeopt to have a better completion experience
+"set completeopt=menuone,noinsert,noselect
 
-" Avoid showing message extra message when using completion
-set shortmess+=c
+"" Avoid showing message extra message when using completion
+"set shortmess+=c
 
 
 "Shortcuts
-imap <tab> <Plug>(completion_smart_tab)
-imap <s-tab> <Plug>(completion_smart_s_tab)
+"imap <tab> <Plug>(completion_smart_tab)
+"imap <s-tab> <Plug>(completion_smart_s_tab)
 
 nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
@@ -281,9 +285,9 @@ nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nmap <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
-nnoremap <C-h> :bp<CR>
-nnoremap <C-l> :bn<CR>
-nnoremap <C-s> :up<CR>
+nmap <C-h> :bp<CR>
+nmap <C-l> :bn<CR>
+nmap <C-s> :up<CR>
 imap <C-s> <c-o>:up<CR>
 vmap <C-s> <c-c>:up<CR>gv
 nnoremap <leader>w :call CloseCurrentBuf()<CR>
