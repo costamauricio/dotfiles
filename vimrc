@@ -46,8 +46,8 @@ let mapleader = "\<Space>"
 
 filetype plugin indent on
 syntax on
-set number relativenumber
-set nu rnu
+set number
+"set relativenumber
 set hidden
 set noswapfile
 set cursorline
@@ -85,8 +85,6 @@ let g:coq_settings = {'keymap.jump_to_mark': v:null, 'auto_start': 'shut-up'}
 let g:vim_http_tempbuffer = 1
 let g:vim_http_split_vertically = 1
 
-let g:nvim_tree_quit_on_open = 1
-
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_sign_added = '▎'
 let g:gitgutter_sign_modified = '▎'
@@ -123,7 +121,7 @@ augroup END
 
 lua << EOF
 require 'nvim-treesitter.configs'.setup {
-    ensure_installed = 'maintained',
+    ensure_installed = 'all',
     highlight = {enable = true},
 }
 
@@ -214,6 +212,7 @@ lspconfig.efm.setup{
         documentFormatting = true,
     },
     root_dir = util.root_pattern('.eslintrc*', '.prettierr*'),
+    autostart = false,
     handlers = {
         [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
             return format_diagnostics(params, client_id, "ESLint")
