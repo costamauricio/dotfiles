@@ -11,7 +11,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'editorconfig/editorconfig-vim'
 
 "Git Integrations
-Plug 'airblade/vim-gitgutter'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'tpope/vim-fugitive'
 
 "LSP and extras
@@ -76,21 +76,16 @@ highlight LspDiagnosticsSignHint ctermfg=Green ctermbg=235 guifg=Green guibg=235
 highlight SpecialKey ctermfg=238 ctermbg=236 guibg=238 guifg=238
 highlight SignColumn guibg=235 ctermbg=235
 
-highlight GitGutterAdd ctermfg=Green ctermbg=235 guifg=Green guibg=235
-highlight GitGutterChange ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
-highlight GitGutterDelete ctermfg=Red ctermbg=235 guifg=Red guibg=235
+highlight GitSignsAdd ctermfg=Green ctermbg=235 guifg=Green guibg=235
+highlight GitSignsChange ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
+highlight GitSignsDelete ctermfg=Red ctermbg=235 guifg=Red guibg=235
 
 let g:coq_settings = {'keymap.jump_to_mark': v:null, 'auto_start': 'shut-up'}
 
 let g:vim_http_tempbuffer = 1
 let g:vim_http_split_vertically = 1
 
-let g:gitgutter_sign_allow_clobber = 0
-let g:gitgutter_sign_added = '▎'
-let g:gitgutter_sign_modified = '▎'
-let g:gitgutter_sign_removed = '▏'
-let g:gitgutter_sign_removed_first_line = '▔'
-let g:gitgutter_sign_modified_removed = '▋'
+let g:nvim_tree_quit_on_open = 1
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'gruvbox'
@@ -120,8 +115,10 @@ augroup PERFORMS
 augroup END
 
 lua << EOF
+require 'gitsigns'.setup()
+
 require 'nvim-treesitter.configs'.setup {
-    ensure_installed = 'all',
+    ensure_installed = {'go', 'javascript'},
     highlight = {enable = true},
 }
 

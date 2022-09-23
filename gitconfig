@@ -8,3 +8,5 @@
     s=status
 [push]
 	default = current
+[init]
+	defaultBranch = main
