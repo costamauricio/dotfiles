@@ -16,4 +16,13 @@ Dotfiles Configuration
 sh install
 ```
 
+## Configyre NVIM
+
+Commands that should be executed on nvim:
+
+- `:PlugUpgrade`
+- `:PlugInstall`
+- `:COQdeps`
+- `:TSInstall all`
+
 use chsh to change default shell to zsh

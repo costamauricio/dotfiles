@@ -1,6 +1,6 @@
 silent !stty -ixon
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.config/nvim/plugged')
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'gruvbox-community/gruvbox'
@@ -61,14 +61,17 @@ set tabstop=4 shiftwidth=4 softtabstop=4
 set autoindent
 set smartindent
 set smartcase
+set mouse=a
+set mouse-=a
 
 set updatetime=750
 
 "autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd Filetype php setlocal tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab autoindent smartindent
 
-highlight LspDiagnosticsSignError ctermfg=Red ctermbg=235 guifg=Red guibg=235
+highlight LspDiagnosticsSignError ctermfg=Red ctermbg=235 guifg=Red guibg=236
 highlight LspDiagnosticsSignWarning ctermfg=Yellow ctermbg=235 guifg=Yellow guibg=235
 highlight LspDiagnosticsSignInformation ctermfg=Blue ctermbg=235 guifg=Blue guibg=235
 highlight LspDiagnosticsSignHint ctermfg=Green ctermbg=235 guifg=Green guibg=235
@@ -84,8 +87,6 @@ let g:coq_settings = {'keymap.jump_to_mark': v:null, 'auto_start': 'shut-up'}
 
 let g:vim_http_tempbuffer = 1
 let g:vim_http_split_vertically = 1
-
-let g:nvim_tree_quit_on_open = 1
 
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'gruvbox'
@@ -118,135 +119,21 @@ lua << EOF
 require 'gitsigns'.setup()
 
 require 'nvim-treesitter.configs'.setup {
-    ensure_installed = {'go', 'javascript'},
+    ensure_installed = {'go', 'javascript', 'php'},
     highlight = {enable = true},
 }
 
-require'nvim-tree'.setup {}
-
--- require('vim.lsp.log').set_level('debug')
-local util = require'lspconfig/util'
-
--- Check for an existant prettierrc* to enable formatting with prettier or tsserver
-local function prettier_config_exists()
-    local eslintrc = vim.fn.glob(".prettier*", true, true)
-
-    if not vim.tbl_isempty(eslintrc) then
-        return true
-    end
-
-    return false
-end
-
-local function format_diagnostics(params, client_id, client_name, filter_out)
-    for i, diagnostic in ipairs(params.diagnostics) do
-        if filter_out ~= nil and filter_out(diagnostic) then
-            params.diagnostics[i] = nil
-        else
-            diagnostic.message = '['.. client_name ..'] '..diagnostic.message..' ['..(diagnostic.code or '')..']'
-        end
-    end
-
-    return require('vim.lsp.diagnostic').on_publish_diagnostics(nil, params, client_id)
-end
-
-local function filter_commonjs_diagnostics(diagnostic)
-    if diagnostic.severity == 4 and diagnostic.code ~= 6133 then
-        return true
-    end
-
-    return false
-end
-
-local lspconfig = require'lspconfig'
-local coq = require'coq'
-
--- npm install -g typescript typescript-language-server
-lspconfig.tsserver.setup(coq.lsp_ensure_capabilities({
-    on_attach=function(client)
-        if prettier_config_exists() then
-            client.resolved_capabilities.document_formatting = false
-        end
-    end,
-    handlers = {
-        [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
-            return format_diagnostics(params, client_id, "TSServer", filter_commonjs_diagnostics)
-        end
-    },
-    filetypes = {
-        "javascript",
-        "javascriptreact",
-        "javascript.jsx",
-        "typescript",
-        "typescriptreact",
-        "typescript.tsx",
-        "json"
-    },
-    flags = {
-        allow_incremental_sync = true
-    }
-}))
-
-local eslint = {
-    lintCommand = "npx --no-install eslint -f unix --stdin --stdin-filename ${INPUT}",
-    lintStdin = true,
-    lintFormats = {"%f:%l:%c: %m"},
-    lintIgnoreExitCode = true,
-    formatCommand = "npx --no-install prettier --stdin-filepath ${INPUT}",
-    formatStdin = true
-}
-
--- install efm-langserver
-lspconfig.efm.setup{
-    on_attach=function(client)
-        if not prettier_config_exists() then
-            client.resolved_capabilities.document_formatting = false
-        end
-
-        client.resolved_capabilities.goto_definition = false
-    end,
-    init_options = {
-        documentFormatting = true,
-    },
-    root_dir = util.root_pattern('.eslintrc*', '.prettierr*'),
-    autostart = false,
-    handlers = {
-        [ "textDocument/publishDiagnostics" ] = function(_, params, client_id)
-            return format_diagnostics(params, client_id, "ESLint")
-        end
-    },
-    settings = {
-        languages = {
-            javascript = {eslint},
-            javascriptreact = {eslint},
-            ["javascript.jsx"] = {eslint},
-            typescript = {eslint},
-            ["typescript.tsx"] = {eslint},
-            typescriptreact = {eslint}
+require'nvim-tree'.setup {
+    actions = {
+        open_file = {
+            quit_on_open = false
         }
-    },
-    filetypes = {
-        "javascript",
-        "javascriptreact",
-        "javascript.jsx",
-        "typescript",
-        "typescript.tsx",
-        "typescriptreact"
-    },
+    }
 }
 
--- install gopls
-lspconfig.gopls.setup(coq.lsp_ensure_capabilities({
-    cmd = {"gopls", "serve"},
-    settings = {
-        gopls = {
-            analyses = {
-                unusedparams = true,
-            },
-            staticcheck = true,
-        },
-    },
-}))
+require'nvim-web-devicons'.setup {
+    default = true
+}
 
 EOF
 
@@ -272,7 +159,7 @@ nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> re <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> ca <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <leader>ff <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <leader>ff <cmd>lua vim.lsp.buf.format({ async = true })<CR>
 
 nnoremap <leader>nt :NvimTreeToggle<CR>
 nnoremap <leader>nf :NvimTreeFindFile<CR>
@@ -295,23 +182,5 @@ vnoremap <leader>y "+y gv
 "nnoremap <S-j> :m+1<CR>
 "vnoremap <S-k> :m '<-2<CR>gv
 "vnoremap <S-j> :m '>+1<CR>gv
-
-lua << EOF
-require('telescope').setup {
-    defaults = {
-        file_ignore_patterns = {'.git/'}
-    },
-    extensions = {
-        fzy_native = {
-            override_generic_sorter = false,
-            override_file_sorter = true,
-        }
-    }
-}
-require'telescope'.load_extension('fzy_native')
-require'nvim-web-devicons'.setup {
-    default = true
-}
-EOF
 
 autocmd VimLeave * silent !stty ixon

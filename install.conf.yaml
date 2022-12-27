@@ -18,12 +18,6 @@
     ~/.oh-my-zsh-custom:
       path: oh-my-zsh-custom
       force: true
-    ~/.vimrc:
-      path: vimrc
-      force: true
-    ~/.vim:
-      path: vim
-      force: true
     ~/.tmux:
       path: tmux
       force: true
@@ -32,12 +26,15 @@
       force: true
     ~/.config/nvim/init.vim:
       create: true
-      path: vimrc
+      path: nvim/init.vim
+      force: true
+    ~/.config/nvim/after:
+      create: true
+      path: nvim/after
       force: true
 
 - shell:
   - [git submodule update --init --recursive, Install Modules and linking files]
-  - [curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install Vim-Plug]
-  - [curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install NVIM Vim-Plug]
+  - [curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install NVIM Vim-Plug]
   - [nvim +PlugUpgrade +qall, Upgrade Vim-Plug]
   - [nvim +PlugInstall +qall, Install VIM plugins]
