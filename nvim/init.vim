@@ -32,7 +32,7 @@ Plug 'kyazdani42/nvim-tree.lua'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 Plug 'nicwest/vim-http'
 
@@ -128,6 +128,9 @@ require'nvim-tree'.setup {
         open_file = {
             quit_on_open = false
         }
+    },
+    git = {
+        ignore = false
     }
 }
 
@@ -163,9 +166,9 @@ nnoremap <leader>ff <cmd>lua vim.lsp.buf.format({ async = true })<CR>
 
 nnoremap <leader>nt :NvimTreeToggle<CR>
 nnoremap <leader>nf :NvimTreeFindFile<CR>
-nnoremap <C-p> <cmd>lua require'telescope.builtin'.find_files({hidden = true})<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <C-p> <cmd>lua require'telescope.builtin'.find_files()<cr>
+nnoremap <leader>fg <cmd>lua require'telescope.builtin'.live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require'telescope.builtin'.buffers()<cr>
 nmap <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle gv
 nmap <C-h> :bp<CR>

@@ -7,6 +7,7 @@ Dotfiles Configuration
 * Git
 * [NeoVim](https://github.com/neovim/neovim) (> 0.6)
 * tmux
+* ripgrep
 * [ag](https://github.com/ggreer/the_silver_searcher)
 * [fzf](https://github.com/junegunn/fzf)
 
