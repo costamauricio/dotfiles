@@ -26,7 +26,7 @@ end
 local function format_diagnostics(params, client_id, client_name, filter_out)
     for i, diagnostic in ipairs(params.diagnostics) do
         if filter_out ~= nil and filter_out(diagnostic) then
-            params.diagnostics[i] = nil
+            table.remove(params.diagnostics, i)
         else
             local code = diagnostic.code or ''
             if code ~= '' then
