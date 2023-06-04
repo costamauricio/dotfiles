@@ -34,7 +34,8 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
-Plug 'nicwest/vim-http'
+Plug 'rest-nvim/rest.nvim'
+Plug 'sago35/tinygo.vim'
 
 call plug#end()
 
@@ -119,7 +120,7 @@ lua << EOF
 require 'gitsigns'.setup()
 
 require 'nvim-treesitter.configs'.setup {
-    ensure_installed = {'go', 'javascript', 'php'},
+    ensure_installed = {'go', 'javascript', 'php', 'http', 'json'},
     highlight = {enable = true},
 }
 
@@ -137,6 +138,8 @@ require'nvim-tree'.setup {
 require'nvim-web-devicons'.setup {
     default = true
 }
+
+require'rest-nvim'.setup { }
 
 EOF
 
@@ -166,6 +169,11 @@ nnoremap <leader>ff <cmd>lua vim.lsp.buf.format({ async = true })<CR>
 
 nnoremap <leader>nt :NvimTreeToggle<CR>
 nnoremap <leader>nf :NvimTreeFindFile<CR>
+
+nnoremap <leader>rr <Plug>RestNvim<CR>
+nnoremap <leader>rc <Plug>RestNvimPreview<CR>
+nnoremap <leader>rl <Plug>RestNvimLast<CR>
+
 nnoremap <C-p> <cmd>lua require'telescope.builtin'.find_files()<cr>
 nnoremap <leader>fg <cmd>lua require'telescope.builtin'.live_grep()<cr>
 nnoremap <leader>fb <cmd>lua require'telescope.builtin'.buffers()<cr>
