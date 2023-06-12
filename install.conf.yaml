@@ -24,9 +24,9 @@
     ~/.tmux.conf:
       path: tmux.conf
       force: true
-    ~/.config/nvim/init.vim:
+    ~/.config/nvim/init.lua:
       create: true
-      path: nvim/init.vim
+      path: nvim/init.lua
       force: true
     ~/.config/nvim/after:
       create: true
@@ -35,6 +35,3 @@
 
 - shell:
   - [git submodule update --init --recursive, Install Modules and linking files]
-  - [curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, Install NVIM Vim-Plug]
-  - [nvim +PlugUpgrade +qall, Upgrade Vim-Plug]
-  - [nvim +PlugInstall +qall, Install VIM plugins]
