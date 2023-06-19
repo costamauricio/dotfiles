@@ -1,6 +1,6 @@
 require('nvim-treesitter.configs').setup {
   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'javascript', 'rust', 'tsx', 'typescript', 'php', 'http', 'json',
-    'vimdoc' },
+    'vimdoc', 'java' },
 
   auto_install = true,
 
@@ -60,3 +60,5 @@ require('nvim-treesitter.configs').setup {
     },
   },
 }
+
+vim.treesitter.language.register('java', 'groovy')

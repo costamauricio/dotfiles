@@ -18,6 +18,10 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Setup plugins
 require('lazy').setup({
+  {
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && npm install",
+  },
   'tpope/vim-fugitive',
   {
     'nvim-treesitter/nvim-treesitter',
@@ -27,8 +31,31 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
   {
+    'navarasu/onedark.nvim',
+    priority = 1000,
+    config = function()
+      require('onedark').setup {
+        style = 'warmer',
+        term_colors = true
+      }
+
+      require('onedark').load()
+    end
+  },
+  {
+    'sainnhe/everforest',
+    priority = 1000,
+    enabled = false,
+    config = function()
+      vim.o.background = "dark"
+      vim.g.everforest_background = 'hard'
+      vim.cmd.colorscheme 'everforest'
+    end,
+  },
+  {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
+    enabled = false,
     config = function()
       require('gruvbox').setup({
         overrides = {
@@ -89,6 +116,7 @@ require('lazy').setup({
       end,
     },
   },
+  'editorconfig/editorconfig-vim',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   { 'numToStr/Comment.nvim',        opts = {} },
@@ -114,8 +142,19 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     opts = {
       tabline = {
-        lualine_a = { 'buffers' },
+        lualine_a = {
+          'buffers'
+        },
         lualine_z = { 'tabs' },
+      },
+      sections = {
+        lualine_c = {
+          {
+            'filename',
+            file_status = true,
+            path = 1
+          }
+        }
       },
       options = {
         icons_enabled = true,
@@ -128,11 +167,14 @@ require('lazy').setup({
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
     opts = {
+      use_treesitter = true,
       char = '┊',
-      show_trailing_blankline_indent = false,
+      show_trailing_blankline_indent = true,
+      show_end_of_line = true,
+      show_current_context = true,
+      show_current_context_start = true
     },
   },
 }, {})
@@ -145,9 +187,9 @@ vim.o.hidden = true
 vim.o.noswapfile = true
 vim.o.cursorline = true
 vim.o.scrolloff = 15
---vim.o.backspace = 'ident,eol,start'
---vim.o.list = 'tab:|,trail:.'
---vim.o.listchars = 'tab:|,trail:.'
+vim.opt.list = true
+-- vim.opt.listchars:append 'eol:↵'
+vim.opt.listchars:append 'trail:.'
 vim.o.autoread = true
 vim.o.hlsearch = false
 vim.o.mouse = false
@@ -162,6 +204,18 @@ vim.o.completeopt = 'menuone,noselect'
 
 vim.g.vim_http_tempbuffer = 1
 vim.g.vim_http_split_vertically = 1
+
+-- Clear trailing whitespaces
+vim.api.nvim_create_augroup('TrimTrailingWhitespaces', { clear = true })
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+  group = 'TrimTrailingWhitespaces',
+  pattern = { "*" },
+  callback = function()
+    save_cursor = vim.fn.getpos(".")
+    vim.cmd([[%s/\s\+$//e]])
+    vim.fn.setpos(".", save_cursor)
+  end,
+})
 
 function close_current_buffer()
   local buffers = vim.tbl_filter(function(buf)
@@ -217,4 +271,3 @@ vim.keymap.set('n', '<leader>ntt', ':NeoTreeShowToggle<CR>', { desc = '[N]eo [T]
 
 -- Setup neovim lua configuration
 require('neodev').setup()
-
