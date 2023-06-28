@@ -104,17 +104,17 @@ let g:coq_settings = {'keymap.jump_to_mark': v:null, 'auto_start': 'shut-up'}
     "endif
 "endfun
 
-fun! TrimWhitespace()
-    let l:save = winsaveview()
-    keeppatterns %s/\s\+$//e
-    call winrestview(l:save)
-endfun
+" fun! TrimWhitespace()
+"     let l:save = winsaveview()
+"     keeppatterns %s/\s\+$//e
+"     call winrestview(l:save)
+" endfun
 
-augroup PERFORMS
-    atocmd!
-    autocmd BufWritePre * :call TrimWhitespace()
+" augroup PERFORMS
+    " atocmd!
+    " autocmd BufWritePre * :call TrimWhitespace()
     "autocmd CursorHold * lua vim.diagnostic.open_float()
-augroup END
+" augroup END
 
 lua << EOF
 -- require 'gitsigns'.setup()

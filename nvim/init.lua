@@ -205,13 +205,38 @@ vim.o.completeopt = 'menuone,noselect'
 vim.g.vim_http_tempbuffer = 1
 vim.g.vim_http_split_vertically = 1
 
+vim.diagnostic.config({
+  virtual_text = {
+    -- source = "always",  -- Or "if_many"
+    prefix = '●', -- Could be '■', '▎', 'x'
+  },
+  severity_sort = true,
+  float = {
+    source = "always",  -- Or "if_many"
+  },
+})
+
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+-- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+vim.api.nvim_create_augroup('DiagnosticsHover', { clear = true })
+vim.api.nvim_create_autocmd({ 'CursorHold' }, {
+  group = 'DiagnosticsHover',
+  pattern = { "*" },
+  callback = function()
+    vim.diagnostic.open_float()
+  end
+})
+
 -- Clear trailing whitespaces
 vim.api.nvim_create_augroup('TrimTrailingWhitespaces', { clear = true })
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   group = 'TrimTrailingWhitespaces',
   pattern = { "*" },
   callback = function()
-    save_cursor = vim.fn.getpos(".")
+    local save_cursor = vim.fn.getpos(".")
     vim.cmd([[%s/\s\+$//e]])
     vim.fn.setpos(".", save_cursor)
   end,

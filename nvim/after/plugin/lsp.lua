@@ -44,15 +44,6 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ff', function()
     vim.lsp.buf.format({ async = true })
   end, '[F]ormat current [f]ile')
-
-  vim.api.nvim_create_augroup('LspHover', { clear = true })
-  vim.api.nvim_create_autocmd({ 'CursorHold' }, {
-    group = 'LspHover',
-    buffer = bufnr,
-    callback = function()
-      vim.diagnostic.open_float()
-    end
-  })
 end
 
 local servers = {
@@ -69,6 +60,9 @@ local servers = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
+      diagnostics = {
+        globals = {'vim'},
+      },
     },
   },
 }
