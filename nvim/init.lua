@@ -74,8 +74,14 @@ require('lazy').setup({
     end,
   },
   {
+    'ruifm/gitlinker.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {}
+  },
+  {
     'ms-jpq/coq_nvim',
     branch = 'coq',
+    enabled = false,
     dependencies = {
       { 'ms-jpq/coq.artifacts',  branch = 'artifacts' },
       { 'ms-jpq/coq.thirdparty', branch = '3p' },
@@ -95,6 +101,16 @@ require('lazy').setup({
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
+    },
+  },
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'L3MON4D3/LuaSnip',
+      'onsails/lspkind.nvim',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lsp',
     },
   },
   {
@@ -177,7 +193,83 @@ require('lazy').setup({
       show_current_context_start = true
     },
   },
+  'mfussenegger/nvim-dap',
+  'leoluz/nvim-dap-go',
+  'rcarriga/nvim-dap-ui',
+  'theHamsta/nvim-dap-virtual-text',
 }, {})
+
+local cmp = require 'cmp'
+local lspkind = require 'lspkind'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<C-y>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true,
+    }),
+  }),
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+    { name = 'path' },
+    { name = 'buffer' },
+  },
+  formatting = {
+    format = lspkind.cmp_format {
+      with_text = true,
+      menu = {
+        buffer = '[buf]',
+        nvim_lsp = '[LSP]',
+        path = '[path]',
+      }
+    }
+  },
+  experimental = {
+    ghost_text = false,
+  }
+})
+
+require('dap-go').setup()
+require('dapui').setup()
+require('nvim-dap-virtual-text').setup()
+
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
+vim.keymap.set('n', '<Leader>lp',
+  function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+-- vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+-- vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
 
 vim.o.syntax = true
 vim.o.filetype = true
@@ -212,7 +304,7 @@ vim.diagnostic.config({
   },
   severity_sort = true,
   float = {
-    source = "always",  -- Or "if_many"
+    source = "always", -- Or "if_many"
   },
 })
 
@@ -225,7 +317,17 @@ vim.api.nvim_create_augroup('DiagnosticsHover', { clear = true })
 vim.api.nvim_create_autocmd({ 'CursorHold' }, {
   group = 'DiagnosticsHover',
   pattern = { "*" },
-  callback = function()
+  callback = function(ev)
+    -- Get the current windows
+    local wins = vim.api.nvim_list_wins()
+    for _, winID in ipairs(wins) do
+      -- Check if any of the current windows is a floating, so we don't want to open the diagnostic
+      -- and replace that one (Usually any LSP definition or help will open as another float window)
+      -- so we only want to open the diagnostic float win when we don't have any other open
+      if vim.api.nvim_win_get_config(winID).relative ~= '' then
+        return
+      end
+    end
     vim.diagnostic.open_float()
   end
 })
@@ -289,6 +391,7 @@ vim.keymap.set('v', '<C-s>', '<c-c>:up<CR>gv', { desc = 'Save changes' })
 
 vim.keymap.set('n', '<leader>n', ':enew<CR>', { desc = '[N]ew buffer' })
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Escape' })
+vim.keymap.set('v', '<leader>y', '"+y gv', { desc = 'Copy to clipboard' })
 
 vim.keymap.set('n', '<leader>w', close_current_buffer, { desc = 'Close the current buffer' })
 

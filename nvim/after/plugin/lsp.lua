@@ -1,17 +1,14 @@
-vim.g.coq_settings = {
-  keymap = { jump_to_mark = '' },
-  auto_start = 'shut-up',
-  clients = {
-    tmux = { enabled = false },
-  },
-}
-
-local coq = require'coq'
+-- vim.g.coq_settings = {
+--   keymap = { jump_to_mark = '' },
+--   auto_start = 'shut-up',
+--   clients = {
+--     tmux = { enabled = false },
+--   },
+-- }
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
-
   local nmap = function(keys, func, desc)
     if desc then
       desc = 'LSP: ' .. desc
@@ -61,11 +58,15 @@ local servers = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
       diagnostics = {
-        globals = {'vim'},
+        globals = { 'vim' },
       },
     },
   },
+  groovyls = {},
 }
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
@@ -76,10 +77,42 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
   function(server_name)
-    require('lspconfig')[server_name].setup(coq.lsp_ensure_capabilities({
+    if server_name == "groovyls" then
+      return require('lspconfig')[server_name].setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = servers[server_name],
+        on_init = function(client, _)
+          local file = io.open(vim.loop.cwd() .. '/.groovy-classpath', "rb") -- r read mode and b binary mode
+          if not file then
+            vim.print('not today')
+          else
+            local contents = file:read "*a"
+            local t = {}
+            for str in string.gmatch(contents, "([^:]+)") do
+              table.insert(t, str)
+            end
+            file:close()
+
+            local groovy = {
+              classpath = t
+            }
+            vim.print(groovy)
+            client.notify('workspace/didChangeConfiguration', {
+              settings = {
+                groovy = groovy,
+              }
+            })
+          end
+        end
+      }
+    end
+
+    require('lspconfig')[server_name].setup {
       on_attach = on_attach,
+      capabilities = capabilities,
       settings = servers[server_name],
-    }))
+    }
   end,
 }
 
@@ -263,22 +296,6 @@ mason_lspconfig.setup_handlers {
 --         "php"
 --     },
 -- }
---
--- -- install gopls
--- lspconfig.gopls.setup(coq.lsp_ensure_capabilities({
---     cmd = {"gopls", "serve"},
---     settings = {
---         gopls = {
---             analyses = {
---                 unusedparams = true,
---             },
---             staticcheck = true,
---         },
---     },
--- }))
---
--- -- rust_analyzer
--- require'lspconfig'.rust_analyzer.setup(coq.lsp_ensure_capabilities({}))
 --
 -- -- arduino-language-server
 -- require'lspconfig'.arduino_language_server.setup(coq.lsp_ensure_capabilities({
