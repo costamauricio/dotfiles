@@ -184,13 +184,15 @@ require('lazy').setup({
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
     -- See `:help indent_blankline.txt`
+    main = "ibl",
     opts = {
-      use_treesitter = true,
-      char = '┊',
-      show_trailing_blankline_indent = true,
-      show_end_of_line = true,
-      show_current_context = true,
-      show_current_context_start = true
+      indent = {
+        tab_char = '┊'
+      },
+      scope = {
+        char = '│',
+        show_start = true
+      }
     },
   },
   'mfussenegger/nvim-dap',
