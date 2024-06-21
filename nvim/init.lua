@@ -138,9 +138,26 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim',        opts = {} },
   { 'kyazdani42/nvim-web-devicons', opts = {} },
   {
-    'rest-nvim/rest.nvim',
-    opts = {},
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    "vhyrro/luarocks.nvim",
+    priority = 1000,
+    config = true,
+    opts = {
+      rocks = { "lua-curl", "nvim-nio", "mimetypes", "xml2lua" }
+    }
+  },
+  {
+    "rest-nvim/rest.nvim",
+    ft = "http",
+    dependencies = { "luarocks.nvim" },
+    config = function()
+      require("rest-nvim").setup({
+        result = {
+          formatters = {
+            json = "jq"
+          }
+        }
+      })
+    end,
   },
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
@@ -197,7 +214,9 @@ require('lazy').setup({
   },
   'mfussenegger/nvim-dap',
   'leoluz/nvim-dap-go',
-  'rcarriga/nvim-dap-ui',
+  {
+    'rcarriga/nvim-dap-ui', dependencies = {"nvim-neotest/nvim-nio"}
+  },
   'theHamsta/nvim-dap-virtual-text',
 }, {})
 
