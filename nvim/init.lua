@@ -1,6 +1,8 @@
 vim.g.mapleader = ' ' -- Leader key is Space
 vim.g.maplocalleader = ' '
 vim.o.termguicolors = true
+vim.g.groovy_highlight_all = true
+vim.g.groovy_highlight_functions = true
 
 -- Install package manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
