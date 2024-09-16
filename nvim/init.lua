@@ -27,6 +27,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/playground',
     },
     build = ':TSUpdate',
   },
@@ -114,6 +115,10 @@ require('lazy').setup({
     },
   },
   {
+    "github/copilot.vim",
+    enabled = false
+  },
+  {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
     dependencies = {
@@ -176,7 +181,10 @@ require('lazy').setup({
     opts = {
       tabline = {
         lualine_a = {
-          'buffers'
+          {
+            'buffers',
+            max_length = vim.o.columns
+          },
         },
         lualine_z = { 'tabs' },
       },
@@ -194,6 +202,7 @@ require('lazy').setup({
         theme = 'auto',
         component_separators = '|',
         section_separators = '',
+        always_divide_middle = false,
       },
     },
   },
@@ -271,9 +280,9 @@ require('dapui').setup()
 require('nvim-dap-virtual-text').setup()
 
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
-vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
-vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
-vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<F8>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F9>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_out() end)
 vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
 vim.keymap.set('n', '<Leader>lp',
@@ -292,12 +301,12 @@ dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close()
 end
 
-vim.o.syntax = true
-vim.o.filetype = true
-vim.o.plugin = true
+vim.o.syntax = 'true'
+vim.o.filetype = 'true'
+-- vim.o.plugin = 'true'
 vim.o.number = true
 vim.o.hidden = true
-vim.o.noswapfile = true
+-- vim.o.noswapfile = true
 vim.o.cursorline = true
 vim.o.scrolloff = 15
 vim.opt.list = true
@@ -305,7 +314,7 @@ vim.opt.list = true
 vim.opt.listchars:append 'trail:.'
 vim.o.autoread = true
 vim.o.hlsearch = false
-vim.o.mouse = false
+vim.o.mouse = ''
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
