@@ -24,6 +24,11 @@ require('lazy').setup({
     "iamcco/markdown-preview.nvim",
     build = "cd app && npm install",
   },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    opts = {},
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+  },
   'tpope/vim-fugitive',
   {
     'nvim-treesitter/nvim-treesitter',
@@ -122,10 +127,11 @@ require('lazy').setup({
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v2.x",
+    branch = "v3.x",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons",
     }
   },
   {
@@ -155,12 +161,11 @@ require('lazy').setup({
   {
     "rest-nvim/rest.nvim",
     ft = "http",
-    dependencies = { "luarocks.nvim" },
     config = function()
       require("rest-nvim").setup({
-        result = {
-          formatters = {
-            json = "jq"
+        response = {
+          hooks = {
+            format = true
           }
         }
       })
@@ -226,10 +231,14 @@ require('lazy').setup({
   'mfussenegger/nvim-dap',
   'leoluz/nvim-dap-go',
   {
-    'rcarriga/nvim-dap-ui', dependencies = {"nvim-neotest/nvim-nio"}
+    'rcarriga/nvim-dap-ui', dependencies = { "nvim-neotest/nvim-nio" }
   },
   'theHamsta/nvim-dap-virtual-text',
-}, {})
+}, {
+  rocks = {
+    hererocks = true,
+  }
+})
 
 local cmp = require 'cmp'
 local lspkind = require 'lspkind'
@@ -412,8 +421,8 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
-vim.keymap.set('n', '<leader>rr', '<Plug>RestNvim<CR>', { desc = '[R]est [R]request' })
-vim.keymap.set('n', '<leader>rl', '<Plug>RestNvimLast<CR>', { desc = '[R]equest [L]ast executed request' })
+vim.keymap.set('n', '<leader>rr', ':Rest run<CR>', { desc = '[R]est [R]request' })
+vim.keymap.set('n', '<leader>rl', ':Rest last<CR>', { desc = '[R]equest [L]ast executed request' })
 
 vim.keymap.set('n', '<C-h>', ':bp<CR>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<C-l>', ':bn<CR>', { desc = 'Next buffer' })
@@ -427,7 +436,7 @@ vim.keymap.set('v', '<leader>y', '"+y gv', { desc = 'Copy to clipboard' })
 
 vim.keymap.set('n', '<leader>w', close_current_buffer, { desc = 'Close the current buffer' })
 
-vim.keymap.set('n', '<leader>ntt', ':NeoTreeShowToggle<CR>', { desc = '[N]eo [T]ree [T]oggle' })
+vim.keymap.set('n', '<leader>ntt', ':Neotree toggle<CR>', { desc = '[N]eo [T]ree [T]oggle' })
 
 -- Setup neovim lua configuration
 require('neodev').setup()
