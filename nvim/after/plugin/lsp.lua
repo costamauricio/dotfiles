@@ -77,45 +77,38 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
   function(server_name)
-    if server_name == "groovyls" then
-      return require('lspconfig')[server_name].setup {
-        capabilities = capabilities,
-        on_attach = on_attach,
-        settings = servers[server_name],
-        on_init = function(client, _)
-          local file = io.open(vim.loop.cwd() .. '/.groovy-classpath', "rb") -- r read mode and b binary mode
-          if not file then
-            vim.print('not today')
-          else
-            local contents = file:read "*a"
-            local t = {}
-            for str in string.gmatch(contents, "([^:]+)") do
-              table.insert(t, str)
-            end
-            file:close()
-
-            local groovy = {
-              classpath = t
-            }
-            vim.print(groovy)
-            client.notify('workspace/didChangeConfiguration', {
-              settings = {
-                groovy = groovy,
-              }
-            })
-          end
-        end
-      }
-    end
-
     require('lspconfig')[server_name].setup {
       on_attach = on_attach,
       capabilities = capabilities,
       settings = servers[server_name],
     }
   end,
-}
+  ["gopls"] = function()
+    require('lspconfig').gopls.setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      handlers = {
+        ["textDocument/implementation"] = function(err, result, params)
+          if err ~= nil then
+            print(err.message)
+            return
+          end
 
+          local new_result = vim.tbl_filter(function(v)
+            return not string.find(v.uri, "mock")
+          end, result)
+
+          if #new_result > 0 then
+            result = new_result
+          end
+
+          vim.lsp.handlers["textDocument/implementation"](err, result, params)
+        end
+      },
+      settings = servers[server_name],
+    }
+  end
+}
 
 -- vim.lsp.buf_request(0, "textDocument/implementation", vim.lsp.util.make_position_params(), function(err, method, result, client_id, bufnr, config)
 --   local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
