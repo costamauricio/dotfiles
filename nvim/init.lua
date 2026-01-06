@@ -234,6 +234,12 @@ require('lazy').setup({
     'rcarriga/nvim-dap-ui', dependencies = { "nvim-neotest/nvim-nio" }
   },
   'theHamsta/nvim-dap-virtual-text',
+  {
+    'rcarriga/nvim-notify',
+    config = function()
+      vim.notify = require('notify')
+    end,
+  }
 }, {
   rocks = {
     hererocks = true,

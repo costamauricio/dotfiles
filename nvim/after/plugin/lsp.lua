@@ -62,7 +62,7 @@ local servers = {
       },
     },
   },
-  groovyls = {},
+  clangd = {},
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -107,6 +107,24 @@ mason_lspconfig.setup_handlers {
       },
       settings = servers[server_name],
     }
+  end,
+  ["clangd"] = function()
+      require('lspconfig').clangd.setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        settings = servers[server_name],
+        on_new_config = function(new_config, new_root_dir)
+          local cmd_file = require('lspconfig.util').path.join(new_root_dir, ".clangd-executable")
+
+          local f = io.open(cmd_file, "r")
+          if f ~= nil then
+            local content = f:read("*l")
+            f:close()
+            new_config.cmd = { content }
+            vim.notify("clangd path: " .. content, vim.log.levels.INFO)
+          end
+        end
+      }
   end
 }
 
