@@ -1,14 +1,70 @@
--- vim.g.coq_settings = {
---   keymap = { jump_to_mark = '' },
---   auto_start = 'shut-up',
---   clients = {
---     tmux = { enabled = false },
---   },
--- }
+local cmp = require 'cmp'
+local lspkind = require 'lspkind'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<C-y>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true,
+    }),
+  }),
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+    { name = 'path' },
+    { name = 'buffer' },
+  },
+  formatting = {
+    format = lspkind.cmp_format {
+      with_text = true,
+      menu = {
+        buffer = '[buf]',
+        nvim_lsp = '[LSP]',
+        path = '[path]',
+      }
+    }
+  },
+  experimental = {
+    ghost_text = false,
+  }
+})
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+
+local golang_on_list = function(result)
+  local new_result = vim.tbl_filter(function(v)
+    return not string.find(v.user_data.uri, "mock")
+  end, result.items)
+
+  if #new_result > 0 then
+    result.itmes = new_result
+  end
+
+  vim.fn.setqflist({}, 'r', result)
+  vim.cmd.cfirst()
+
+  if #new_result > 1 then
+    vim.cmd.copen()
+  end
+end
+
+local on_attach = function(opts, bufnr)
   local nmap = function(keys, func, desc)
     if desc then
       desc = 'LSP: ' .. desc
@@ -22,7 +78,13 @@ local on_attach = function(_, bufnr)
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-  nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+
+  if opts.config.name == "gopls" then
+    nmap('gI', function() vim.lsp.buf.implementation({ on_list = golang_on_list }) end, '[G]oto [I]mplementation')
+  else
+    nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+  end
+
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   --nmap('<leader>is', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
@@ -63,6 +125,7 @@ local servers = {
     },
   },
   clangd = {},
+  ts_ls = {}
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -75,58 +138,32 @@ mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
+for _, server in ipairs(mason_lspconfig.get_installed_servers()) do
+  if server == "clangd" then
+    vim.lsp.config(server, {
       on_attach = on_attach,
       capabilities = capabilities,
-      settings = servers[server_name],
-    }
-  end,
-  ["gopls"] = function()
-    require('lspconfig').gopls.setup {
+      settings = servers[server],
+      on_new_config = function(new_config, new_root_dir)
+        local cmd_file = require('lspconfig.util').path.join(new_root_dir, ".clangd-executable")
+
+        local f = io.open(cmd_file, "r")
+        if f ~= nil then
+          local content = f:read("*l")
+          f:close()
+          new_config.cmd = { content }
+          vim.notify("clangd path: " .. content, vim.log.levels.INFO)
+        end
+      end
+    })
+  else
+    vim.lsp.config(server, {
       on_attach = on_attach,
       capabilities = capabilities,
-      handlers = {
-        ["textDocument/implementation"] = function(err, result, params)
-          if err ~= nil then
-            print(err.message)
-            return
-          end
-
-          local new_result = vim.tbl_filter(function(v)
-            return not string.find(v.uri, "mock")
-          end, result)
-
-          if #new_result > 0 then
-            result = new_result
-          end
-
-          vim.lsp.handlers["textDocument/implementation"](err, result, params)
-        end
-      },
-      settings = servers[server_name],
-    }
-  end,
-  ["clangd"] = function()
-      require('lspconfig').clangd.setup {
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = servers[server_name],
-        on_new_config = function(new_config, new_root_dir)
-          local cmd_file = require('lspconfig.util').path.join(new_root_dir, ".clangd-executable")
-
-          local f = io.open(cmd_file, "r")
-          if f ~= nil then
-            local content = f:read("*l")
-            f:close()
-            new_config.cmd = { content }
-            vim.notify("clangd path: " .. content, vim.log.levels.INFO)
-          end
-        end
-      }
+      settings = servers[server],
+    })
   end
-}
+end
 
 -- vim.lsp.buf_request(0, "textDocument/implementation", vim.lsp.util.make_position_params(), function(err, method, result, client_id, bufnr, config)
 --   local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")

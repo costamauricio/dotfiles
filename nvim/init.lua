@@ -151,14 +151,6 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim',        opts = {} },
   { 'kyazdani42/nvim-web-devicons', opts = {} },
   {
-    "vhyrro/luarocks.nvim",
-    priority = 1000,
-    config = true,
-    opts = {
-      rocks = { "lua-curl", "nvim-nio", "mimetypes", "xml2lua" }
-    }
-  },
-  {
     "rest-nvim/rest.nvim",
     ft = "http",
     config = function()
@@ -170,6 +162,13 @@ require('lazy').setup({
         }
       })
     end,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      opts = function(_, opts)
+        opts.ensure_installed = opts.ensure_installed or {}
+        table.insert(opts.ensure_installed, "http")
+      end,
+    }
   },
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
@@ -243,52 +242,6 @@ require('lazy').setup({
 }, {
   rocks = {
     hererocks = true,
-  }
-})
-
-local cmp = require 'cmp'
-local lspkind = require 'lspkind'
-
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  window = {
-    -- completion = cmp.config.window.bordered(),
-    documentation = cmp.config.window.bordered(),
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<C-y>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    }),
-  }),
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-    { name = 'path' },
-    { name = 'buffer' },
-  },
-  formatting = {
-    format = lspkind.cmp_format {
-      with_text = true,
-      menu = {
-        buffer = '[buf]',
-        nvim_lsp = '[LSP]',
-        path = '[path]',
-      }
-    }
-  },
-  experimental = {
-    ghost_text = false,
   }
 })
 
