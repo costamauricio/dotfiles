@@ -53,7 +53,7 @@ local golang_on_list = function(result)
   end, result.items)
 
   if #new_result > 0 then
-    result.itmes = new_result
+    result.items = new_result
   end
 
   vim.fn.setqflist({}, 'r', result)
