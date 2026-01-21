@@ -123,7 +123,7 @@ require('lazy').setup({
   },
   {
     "github/copilot.vim",
-    enabled = false
+    enabled = true
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -238,6 +238,12 @@ require('lazy').setup({
     config = function()
       vim.notify = require('notify')
     end,
+  },
+  "olimorris/codecompanion.nvim",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "nvim-treesitter/nvim-treesitter",
+    "nvim-telescope/telescope.nvim",
   }
 }, {
   rocks = {
